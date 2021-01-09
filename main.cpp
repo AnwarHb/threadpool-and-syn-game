@@ -2,7 +2,7 @@
 
 static inline game_params parse_input_args(int argc, char **argv);
 static inline void usage(const char* mes);
-static void calc_and_append_statistics(uint n_threads, const vector<float>& gen_hist, const vector<float>& tile_hist);
+static void calc_and_append_statistics(uint n_threads, const vector<double>& gen_hist, const vector<double>& tile_hist);
 
 /*--------------------------------------------------------------------------------
 										Main
@@ -46,13 +46,13 @@ static inline void usage(const char* mes) {
 }
 
 
-static void calc_and_append_statistics(uint n_threads, const vector<float>& gen_hist, const vector<float>& tile_hist) {
+static void calc_and_append_statistics(uint n_threads, const vector<double>& gen_hist, const vector<double>& tile_hist) {
 
-	double total_time = (float)accumulate(gen_hist.begin(), gen_hist.end(), 0.0);
-	double avg_gen_time = total_time / gen_hist.size();
-	double avg_tile_time = (float)accumulate(tile_hist.begin(), tile_hist.end(), 0.0) / tile_hist.size();
-	double gen_rate = gen_hist.size() / total_time;
-	double tile_rate = tile_hist.size() / total_time;
+	float total_time = (float)accumulate(gen_hist.begin(), gen_hist.end(), 0.0);
+	float avg_gen_time = total_time / gen_hist.size();
+	float avg_tile_time = (float)accumulate(tile_hist.begin(), tile_hist.end(), 0.0) / tile_hist.size();
+	float gen_rate = gen_hist.size() / total_time;
+	float tile_rate = tile_hist.size() / total_time;
 
 	ifstream ifile(DEF_RESULTS_FILE_NAME);
 	bool file_exists = ifile.good();
@@ -70,3 +70,4 @@ static void calc_and_append_statistics(uint n_threads, const vector<float>& gen_
 
 	results_file.close();
 }
+
