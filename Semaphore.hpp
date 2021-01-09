@@ -16,9 +16,11 @@ public:
 private:
 	pthread_mutex_t sem_Mutex;
 	pthread_cond_t sem_Cond;
-	// added values for the starting value of counter and current value of counter // 
-	int startingVal;
-	int currentVal;
+	unsigned long thread_min_watinig; // changed to unsigned long here
+	unsigned long max_cores;
+	unsigned long new_id;
+	
+
 	
 };
 
