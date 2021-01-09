@@ -2,47 +2,36 @@
 // define a value for locked mutex // 
 #define ZEROSEM 0
 // implement methods // 
-Semaphore::Semaphore(): startingVal(0),currentVal(0){
+Semaphore::Semaphore(): thread_min_watinig(0),max_cores(0),new_id(0){
+	pthread_mutex_init(&sem_Mutex,nullptr);	
 	pthread_cond_init(&sem_Cond,nullptr);
-	// define attribute // 
-	pthread_mutexattr_t attrs;
-	pthread_mutexattr_init(&attrs);
-	// set type of attribute - ERRORCHECK //
-	//  This type of mutex provides error checking.
-	// A thread attempting to relock this mutex without first unlocking the mutex returns an error. //
-	// A thread attempting to unlock a mutex that another thread has locked returns an error. //
-	 //A thread attempting to unlock an unlocked mutex returns an error.//
-	pthread_mutexattr_settype(&attrs,PTHREAD_MUTEX_ERRORCHECK);
-	// now intialize mutex // 
-	pthread_mutex_init(&sem_Mutex,&attrs);	
 	}
 // same but intialize with val instead of zero //
-Semaphore::Semaphore(unsigned val) :startingVal(val),currentVal(val){
+Semaphore::Semaphore(unsigned val) :thread_min_watinig(0), max_cores((unsigned long)val),new_id(0){
+	pthread_mutex_init(&sem_Mutex,nullptr);	
 	pthread_cond_init(&sem_Cond,nullptr);
-	pthread_mutexattr_t attrs;
-	pthread_mutexattr_init(&attrs);
-	pthread_mutexattr_settype(&attrs,PTHREAD_MUTEX_ERRORCHECK);
-	pthread_mutex_init(&sem_Mutex,&attrs);	
-	
+		
 	}
 void Semaphore::down(){
 	// lock mutex //
 	pthread_mutex_lock(&sem_Mutex);
+	unsigned long sem_id = new_id++;
 	// wait until we unlocked // 
-	while(currentVal<=ZEROSEM){
+	while(sem_id > max_cores+thread_min_watinig || max_cores==ZEROSEM){
 			pthread_cond_wait(&sem_Cond,&sem_Mutex);
 		}
 	// dec the counter // 
-	currentVal--;
+	max_cores--;
+	thread_min_watinig++; // added // 
 	// finally, unlock//
 	pthread_mutex_unlock(&sem_Mutex);	
 	}
 void Semaphore::up(){
 	//first lock the mutex //
 	pthread_mutex_lock(&sem_Mutex);
-	currentVal++; // increse the current counter //
-	// ready for signal // 
-	pthread_cond_signal(&sem_Cond);
+	max_cores++; // increse the current counter //
+	// ready for signal - use broadcast instead // 
+	pthread_cond_broadcast(&sem_Cond);
 	// unlock the mutex in the end // 
 	pthread_mutex_unlock(&sem_Mutex);
 
