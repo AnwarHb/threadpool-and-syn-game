@@ -17,14 +17,14 @@ public:
 	// Creates the internal thread via pthread_create 
 	bool start()
 	{
-		int result=pthread_create(&m_thread,NULL,entry_func,this);
+		int result=pthread_create(&m_thread,nullptr,entry_func,this);
 		return (bool)result;
 	}
 
 	/** Will not return until the internal thread has exited. */
 	void join()
 	{
-		pthread_join(m_thread,NULL);
+		pthread_join(m_thread,nullptr);
 	}
 
 	/** Returns the thread_id **/
@@ -43,3 +43,4 @@ private:
 };
 
 #endif
+
